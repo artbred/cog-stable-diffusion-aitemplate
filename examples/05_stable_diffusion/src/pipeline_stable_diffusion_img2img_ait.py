@@ -191,8 +191,10 @@ class StableDiffusionImg2ImgAITPipeline(StableDiffusionImg2ImgPipeline):
         eta: Optional[float] = 0.0,
         generator: Optional[torch.Generator] = None,
         output_type: Optional[str] = "pil",
-	negative_prompt: Optional[Union[str, List[str]]] = None,
+        negative_prompt: Optional[Union[str, List[str]]] = None,
         return_dict: bool = True,
+        width: Optional[int] = 512,
+        height: Optional[int] = 512
     ):
         r"""
         Function invoked when calling the pipeline for generation.
@@ -313,7 +315,6 @@ class StableDiffusionImg2ImgAITPipeline(StableDiffusionImg2ImgPipeline):
         # get unconditional embeddings for classifier free guidance
         if do_classifier_free_guidance:
             max_length = text_input.input_ids.shape[-1]
-            print(type(prompt), type(negative_prompt))
             if negative_prompt is None:
                 uncond_tokens = [""] * batch_size
             elif type(prompt) is not type(negative_prompt):

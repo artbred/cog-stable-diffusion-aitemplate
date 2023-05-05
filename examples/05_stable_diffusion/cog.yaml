@@ -1,0 +1,17 @@
+build:
+  gpu: true
+  image: "r8.im/artbred/polymorphia_ft-every-sd1-archmain-v2"
+  cuda: "11.6.2"
+  python_version: "3.8.10"
+  python_packages:
+    - "diffusers==0.11.1"
+    - "torch==1.12.0"
+    - "transformers==4.25"
+    - "accelerate==0.15.0"
+
+  run:
+    - git clone https://github.com/artbred/cog-stable-diffusion-aitemplate
+    - cd cog-stable-diffusion-aitemplate/python && python3 setup.py bdist_wheel && pip install dist/*.whl 
+
+
+predict: "predict.py:Predictor"
