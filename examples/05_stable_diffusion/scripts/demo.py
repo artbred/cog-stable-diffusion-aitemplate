@@ -29,7 +29,7 @@ from src.pipeline_stable_diffusion_ait import StableDiffusionAITPipeline
 @click.command()
 @click.option(
     "--local-dir",
-    default="./tmp/diffusers-pipeline/stabilityai/stable-diffusion-v2",
+    default="./tmp/diffusers-pipeline/polymorphia/ft-every-sd1-archmain-v2",
     help="the local diffusers pipeline directory",
 )
 @click.option("--width", default=512, help="Width of generated image")

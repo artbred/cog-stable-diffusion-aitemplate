@@ -40,17 +40,21 @@ from src.pipeline_stable_diffusion_img2img_ait import StableDiffusionImg2ImgAITP
     "--prompt", default="A fantasy landscape, trending on artstation", help="prompt"
 )
 @click.option(
+    "--negative_prompt", default=None, help="negative prompt"
+)
+@click.option(
     "--benchmark", type=bool, default=False, help="run stable diffusion e2e benchmark"
 )
-def run(local_dir, width, height, prompt, benchmark):
+@click.option(
+    "--batch", default=6, help="run stable diffusion e2e benchmark"
+)
+def run(batch, negative_prompt, local_dir, width, height, prompt, benchmark):
     # load the pipeline
     device = "cuda"
     pipe = StableDiffusionImg2ImgAITPipeline.from_pretrained(
         local_dir,
         revision="fp16",
         torch_dtype=torch.float16,
-        safety_checker=None,
-        feature_extractor=None,
     )
     pipe = pipe.to(device)
     # let's download an initial image
@@ -59,7 +63,7 @@ def run(local_dir, width, height, prompt, benchmark):
     response = requests.get(url)
     init_image = Image.open(BytesIO(response.content)).convert("RGB")
     init_image = init_image.resize((height, width))
-
+    prompt = [prompt] * batch
     with torch.autocast("cuda"):
         images = pipe(
             prompt=prompt, init_image=init_image, strength=0.75, guidance_scale=7.5

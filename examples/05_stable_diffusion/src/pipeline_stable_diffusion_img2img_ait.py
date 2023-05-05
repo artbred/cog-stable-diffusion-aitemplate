@@ -191,6 +191,7 @@ class StableDiffusionImg2ImgAITPipeline(StableDiffusionImg2ImgPipeline):
         eta: Optional[float] = 0.0,
         generator: Optional[torch.Generator] = None,
         output_type: Optional[str] = "pil",
+	negative_prompt: Optional[Union[str, List[str]]] = None,
         return_dict: bool = True,
     ):
         r"""
@@ -312,16 +313,30 @@ class StableDiffusionImg2ImgAITPipeline(StableDiffusionImg2ImgPipeline):
         # get unconditional embeddings for classifier free guidance
         if do_classifier_free_guidance:
             max_length = text_input.input_ids.shape[-1]
+            print(type(prompt), type(negative_prompt))
+            if negative_prompt is None:
+                uncond_tokens = [""] * batch_size
+            elif type(prompt) is not type(negative_prompt):
+                raise TypeError(
+                    f"`negative_prompt` should be the same type to `prompt`, but got {type(negative_prompt)}")
+            elif isinstance(negative_prompt, str):
+                uncond_tokens = [negative_prompt]
+            elif batch_size != len(negative_prompt):
+                raise ValueError(
+                   f"negative_prompt batch size incorrect"
+                )
+            else:
+                uncond_tokens = negative_prompt
             uncond_input = self.tokenizer(
-                [""] * batch_size,
+                uncond_tokens,
                 padding="max_length",
                 max_length=max_length,
+                truncation=True,
                 return_tensors="pt",
             )
             uncond_embeddings = self.clip_inference(
-                uncond_input.input_ids.to(self.device)
+               uncond_input.input_ids.to(self.device)
             )
-
             # For classifier free guidance, we need to do two forward passes.
             # Here we concatenate the unconditional and text embeddings into a single batch
             # to avoid doing two forward passes

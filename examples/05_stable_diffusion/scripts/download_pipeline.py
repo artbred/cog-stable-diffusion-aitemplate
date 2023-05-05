@@ -21,13 +21,12 @@ from diffusers import StableDiffusionPipeline
 @click.option("--token", default="", help="access token")
 @click.option(
     "--save_directory",
-    default="./tmp/diffusers-pipeline/stabilityai/stable-diffusion-v2",
+    default="./tmp/diffusers-pipeline/polymorphia/ft-every-sd1-archmain-v2",
     help="pipeline files local directory",
 )
 def download_pipeline_files(token, save_directory) -> None:
     StableDiffusionPipeline.from_pretrained(
-        "stabilityai/stable-diffusion-2",
-        revision="fp16",
+        "polymorphia/ft-every-sd1-archmain-v2",
         torch_dtype=torch.float16,
         # use provided token or the one generated with `huggingface-cli login``
         use_auth_token=token if token != "" else True,
